@@ -1,4 +1,0 @@
-<script>
-    try { window.parent.refreshInfoSet("<!--#input_1-->", "<!--#input_2-->","<!--#output-->","<!--#netdata-->","<!--#nettype-->"); } catch (e) {};  
-    setTimeout(function() { window.location.reload() }, 1500);
-</script>
