@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>CARGOA-后台系统</title>
+<style>
+	table,table tr th, table tr td { border:1px solid #0094ff; }
+	table { width: 200px; min-height: 25px; line-height: 25px; text-align: center; border-collapse: collapse;}   
+</style>
+<script>
+function selectTest()
+{
+	 if(window.parent.document.getElementById("monitorsel").value==1)
+	 {
+        window.parent.document.getElementById("monitored").value=2;
+	 }
+	 else
+	 {
+	    window.parent.document.getElementById("monitored").value=1;
+	 }
+
+}
+
+function createNewXHR() {
+	if (window.XMLHttpRequest) {
+		return new XMLHttpRequest();
+	} else {
+		return new ActiveXObject("Microsoft.XMLHTTP");
+	}
+}
+
+var monitor;
+var action;
+
+var controlXHR1 = createNewXHR();
+function mirrordataset()
+            {     
+				action =window.parent.document.getElementById("actselect").value; 
+				monitor=window.parent.document.getElementById("monitorsel").value;       
+				controlXHR1.abort();
+                controlXHR1.open("GET","/mirror.cgi?act=" +action+ "&monitor="+monitor+"&randpara=" + Math.random(),true);
+                controlXHR1.onreadystatechange=function()
+                  {
+                  }
+                controlXHR1.send();
+            }
+
+
+</script>
+</head>
+<body>
+	<table class="table" cellspacing="0" cellpadding="0" width="100%" align="center" border="0">
+		<tr>
+			<td style="text-align:left">
+
+				<form id="mirrorForm" method="GET" action="">
+					<table class="clsptd">
+						<thead>
+						<tr>
+								<th width="180px">Active</th>
+								<th width="180px">Mirrored</th>
+								<th width="240px">Mirror</th>
+						</tr>
+						</thead>
+					
+						<tr>
+								<td><select  id="actselect" >
+								<option value="0">Close  </option>
+								<option value="1">Open</option>
+								</select>
+								</td>
+								<td><select  id="monitored"  disabled="">
+								<option value="1">Port1</option>
+								<option value="2">Port2</option>
+								</select>
+								</td>
+								<td><select  id="monitorsel"   onclick="selectTest()" >
+								<option value="1">Port1</option>
+								<option value="2">Port2</option>  
+								</select>
+								</td>				
+						</tr>						
+						<tr><td colspan="3"><input type="button"  value="Apply" id="Apply" onclick="mirrordataset()"></td></tr>
+									
+					</table>
+				</form>
+			</td>
+		</tr>
+	</table>
+</body>
+</html>

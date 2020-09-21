@@ -1,0 +1,169 @@
+﻿ <!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Access-Control-Allow-Origin" content="*"; charset=GBK>
+<title>Cargoa 设备激活</title>
+<style>
+	table,table tr th, table tr td { border:1px solid #0094ff; }
+	table { width: 200px; min-height: 30px; line-height:30px; text-align: center; border-collapse: collapse;} 	 
+body {
+	margin-top: 150px;
+}
+</style>
+<script>
+var serverdata;
+var netdata;
+var productdata;
+var userdata;
+var stdata;
+var whoname;
+var passworddata;
+
+var encodename;
+var encodepassword;
+function createNewXHR() {
+	if (window.XMLHttpRequest) {
+		return new XMLHttpRequest();
+	} else {
+		return new ActiveXObject("Microsoft.XMLHTTP");
+	}
+}
+var controlXHR1 = createNewXHR();
+function productactive()
+{
+	controlXHR1.abort();
+    controlXHR1.open("GET","/mac.cgi?productid="+"1"+"&randpara=" + Math.random(),true);				
+	controlXHR1.send();
+	controlXHR1.onreadystatechange=function()                
+				  {
+				      
+		              if (controlXHR1.readyState==4)
+                        {
+						    if(controlXHR1.status==200)
+							{
+							 stdata=controlXHR1.responseText;	
+							 activeget();						 
+							}
+                        }					 
+                   }
+}
+
+function activeget()
+            { 			    
+			    netdata=window.parent.document.getElementById("netselect").value;
+			    productdata=window.parent.document.getElementById("productselect").value;
+				userdata=window.parent.document.getElementById("user").value;
+				whoname=window.parent.document.getElementById("whodata").value;	
+				passworddata=window.parent.document.getElementById("passwordvalue").value;
+				encodename    = window.btoa(whoname);
+				encodepassword= window.btoa(passworddata);
+				if((whoname=="")||(passworddata=="")||(userdata=="在此输入产品使用地"))
+				{
+				  if(userdata=="在此输入产品使用地")
+				  {
+				     alert("请输入产品使用地");
+				  }
+				  else
+				  {
+				     alert("输入的提交人和密码不可为空");
+				  }
+				}
+				else
+				{							       
+					controlXHR1.abort();
+					controlXHR1.open("GET","http://www.cargoa.cn/qMGU4iILqpQ9vv2MPiE8on/?"+stdata+"&net="+netdata+"&product="+productdata+"&users="+userdata+"&submits="+encodename+"&password="+encodepassword+"&randpara=" + Math.random(),true);				
+					controlXHR1.send();      		
+					controlXHR1.onreadystatechange=function()                
+					  {
+						  
+						  if (controlXHR1.readyState==4)
+							{
+								if(controlXHR1.status==200)
+								{
+									 serverdata=controlXHR1.responseText;
+									 if((serverdata=="")||(serverdata==null))
+									 {
+									   alert("提交失败");
+									 }
+									 else
+									 {
+										activeset();
+									 }						 
+								}
+							}					 
+					   }
+				 }
+				          
+             }
+function activeset()
+{
+    controlXHR1.abort();
+	controlXHR1.open("GET","/mac.cgi?macadd="+serverdata+ "&randpara=" + Math.random(),true);
+	controlXHR1.send();
+    controlXHR1.onreadystatechange=function()                
+			{				      
+		       if (controlXHR1.readyState==4)
+                  {
+					  if(controlXHR1.status==200)
+						{
+							window.parent.document.getElementById("activebutton").value="提交成功";
+							window.parent.document.getElementById("activebutton").disabled="disabled";
+						}
+                   }					 
+              }	
+			  
+}
+</script>
+
+</head>
+<body>				
+	<table class="table" cellspacing="0" cellpadding="0" width="292" align="center" border="0">
+		<tr>
+			<td width="290" style="text-align:left">
+
+				<form id="macform" method="get" action="">
+					<table class="clsptd">
+						<thead>
+						<tr>
+								<th colspan="4" width="600">提交设备信息</th>
+						</tr>
+						</thead>
+					    <tr>
+						        <td colspan="1"><select id="netselect">
+									  <option value ="P">  P  网  </option>
+									  <option value ="D">  D  网  </option>
+									  <option value ="E">  E  网  </option>									  
+									</select>
+								</td>
+								<td colspan="1"><select id="productselect">
+									  <option value ="IO">IO模块</option>
+									  <option value ="SD">变频器</option>
+									  <option value ="SF">断水器</option>
+									  <option value ="TCP">TCP</option>										  
+									</select>
+								</td>
+								<td colspan="2"><input name="" type="text"  id="user"  value="在此输入产品使用地" ></td>
+								
+						</tr>
+						<tr>
+						       <th colspan="1" width="80">提交人</th>							   
+							   <td colspan="3"><input type="text"  id="whodata"  value="" ></td>
+							   
+						</tr>
+						<tr>
+						       <th colspan="1" width="80">密码</th>							   
+							   <td colspan="3"><input type="password"  id="passwordvalue"  value="" ></td>
+							   
+						</tr>												
+						<tr>
+						       <td colspan="4"><input name="" type="button"  id="activebutton"   onClick="productactive()"   value="提交"  ></td>
+						</tr>
+											
+					</table>
+				</form>
+		  </td>
+		</tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,525 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" style="overflow-x:hidden;overflow-y:visable;">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="pragma" content="no-cache">
+<meta name="renderer" content="webkit">
+<title>StationConfiguIO</title>
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+
+<link href="css/basic_layout.css" rel="stylesheet" type="text/css">
+<link href="css/common_style.css" rel="stylesheet" type="text/css">
+<script>
+/**/
+function createNewXHR() {
+	if (window.XMLHttpRequest) {
+		return new XMLHttpRequest();
+	} else {
+		return new ActiveXObject("Microsoft.XMLHTTP");
+	}
+}
+var controlXHR1 = createNewXHR();
+
+function ipset()
+{
+    /*DHCP*/
+    if(window.parent.document.getElementById("dhcp").checked)
+    {
+        controlXHR1.abort();
+        controlXHR1.open("GET","/io.cgi?dhcp="+"1"+"&randpara=" + Math.random(),true);				
+	    controlXHR1.send();
+	    controlXHR1.onreadystatechange=function()                
+				  {
+				      
+		              if (controlXHR1.readyState==4)
+                        {
+						    if(controlXHR1.status==200)
+							{
+							alert("DHCP模式生效")					 
+							}
+                        }					 
+                   }
+        return 0;
+    }
+    /*设置ip*/
+    if(window.parent.document.getElementById("manual").checked)
+    {      /*判断是否有效*/
+            if((window.parent.document.getElementById("IpAddr1").value>255)|(window.parent.document.getElementById("IpAddr2").value>255)|(window.parent.document.getElementById("IpAddr3").value>255))
+                {
+                alert("IP地址是无效的！");
+                    return 1;
+                }
+            else if((window.parent.document.getElementById("SNMask1").value>255)|(window.parent.document.getElementById("SNMask2").value>255)|(window.parent.document.getElementById("SNMask3").value>255)|(window.parent.document.getElementById("SNMask4").value>255))
+                {
+                alert("子网掩码是无效的！");
+                    return 1;
+                }
+            else if((window.parent.document.getElementById("DGAddr1").value>255)|(window.parent.document.getElementById("DGAddr2").value>255)|(window.parent.document.getElementById("DGAddr3").value>255)|(window.parent.document.getElementById("DGAddr4").value>255)) 
+                {
+                alert("默认网关是无效的！"); 
+                return 1;
+                }
+            else if((window.parent.document.getElementById("IpAddr1").value=="")|(window.parent.document.getElementById("IpAddr2").value=="")|(window.parent.document.getElementById("IpAddr3").value=="")|(window.parent.document.getElementById("SNMask1").value=="")|(window.parent.document.getElementById("SNMask2").value=="")|(window.parent.document.getElementById("SNMask3").value=="")|(window.parent.document.getElementById("SNMask4").value=="")|(window.parent.document.getElementById("DGAddr1").value=="")|(window.parent.document.getElementById("DGAddr2").value=="")|(window.parent.document.getElementById("DGAddr3").value=="")|(window.parent.document.getElementById("DGAddr4").value==""))
+                {
+                    alert("输入框不能为空！"); 
+                }
+            /*发送数据函数*/  
+            var ipadd1=window.parent.document.getElementById("IpAddr1").value>>>0;
+            var ipadd2=window.parent.document.getElementById("IpAddr2").value>>>0;
+            var ipadd3=window.parent.document.getElementById("IpAddr3").value>>>0;
+            
+            var ipdata1=(ipadd2|(ipadd1<<8))>>>0; 
+            var ipdata2=(ipadd3)>>>0;        
+            /*js默认数字为带符号数，bit32位会定义为符号位，>>>0是将符号数转化为无符号数的操作*/
+            /*网页debug表现结果为带符号数的值，有“”标记；无符号数无“”标记*/
+            var mask1=window.parent.document.getElementById("SNMask1").value>>>0;
+            var mask2=window.parent.document.getElementById("SNMask2").value>>>0;
+            var mask3=window.parent.document.getElementById("SNMask3").value>>>0;
+            var mask4=window.parent.document.getElementById("SNMask4").value>>>0;
+            var maskdata1=(mask2|mask1<<8)>>>0;
+            var maskdata2=(mask4|mask3<<8)>>>0;
+            var gateway1=window.parent.document.getElementById("DGAddr1").value;
+            var gateway2=window.parent.document.getElementById("DGAddr2").value;
+            var gateway3=window.parent.document.getElementById("DGAddr3").value;
+            var gateway4=window.parent.document.getElementById("DGAddr4").value;
+            var gatewaydata1=(gateway2|gateway1<<8)>>>0;
+            var gatewaydata2=(gateway4|gateway3<<8)>>>0;   
+
+                controlXHR1.abort();
+                controlXHR1.open("GET","/io.cgi?ip1="+ipdata1+"&ip2="+ipdata2+"&mask1="+maskdata1+"&mask2="+maskdata2+"&gateway1="+gatewaydata1+"&gateway2="+gatewaydata2+"&randpara=" + Math.random(),true);				
+                controlXHR1.send();
+                controlXHR1.onreadystatechange=function()                
+                        {
+                            
+                            if (controlXHR1.readyState==4)
+                                {
+                                    if(controlXHR1.status==200)
+                                    {
+                                    alert("IP修改成功")					 
+                                    }
+                                }					 
+                        }
+
+                return 0;
+    }
+    else
+    {
+        alert("Please choose DHCP or Manual !");   
+    }
+}
+
+function restartrobot()
+{
+	controlXHR1.abort();
+    controlXHR1.open("GET","/io.cgi?restart="+"1"+"&randpara=" + Math.random(),true);				
+	controlXHR1.send();
+	controlXHR1.onreadystatechange=function()                
+				  {
+				      
+		              if (controlXHR1.readyState==4)
+                        {
+						    if(controlXHR1.status==200)
+							{
+							 alert("设备重启")						 
+							}
+                        }					 
+                   }
+}
+function resetToDefault()
+{
+	controlXHR1.abort();
+    controlXHR1.open("GET","/io.cgi?setdef="+"1"+"&randpara=" + Math.random(),true);				
+	controlXHR1.send();
+	controlXHR1.onreadystatechange=function()                
+				  {
+				      
+		              if (controlXHR1.readyState==4)
+                        {
+						    if(controlXHR1.status==200)
+							{
+							 alert("设备已回复出厂设置")						 
+							}
+                        }					 
+                   }
+}
+
+
+
+
+/*网页数据刷新*/
+var portconfigID=new Array(8)
+portconfigID[0]="Input0idimg";
+portconfigID[1]="Input1idimg";
+portconfigID[2]="Input2idimg";
+portconfigID[3]="Input3idimg";
+portconfigID[4]="Input4idimg";
+portconfigID[5]="Input5idimg";
+portconfigID[6]="Input6idimg";
+portconfigID[7]="Input7idimg";
+
+var output=new Array(8)
+output[0]="outputid0";
+output[1]="outputid1";
+output[2]="outputid2";
+output[3]="outputid3";
+output[4]="outputid4";
+output[5]="outputid5";
+output[6]="outputid6";
+output[7]="outputid7";
+/*ip格式设置*/
+function dhcpclick()
+{
+
+	window.parent.document.getElementById("IpAddr1").readOnly="readOnly";
+    window.parent.document.getElementById("IpAddr2").readOnly="readOnly";
+	window.parent.document.getElementById("IpAddr3").readOnly="readOnly";
+	window.parent.document.getElementById("IpAddr4").readOnly="readOnly";
+
+	window.parent.document.getElementById("SNMask1").readOnly="readOnly";
+	window.parent.document.getElementById("SNMask2").readOnly="readOnly";
+	window.parent.document.getElementById("SNMask3").readOnly="readOnly";
+	window.parent.document.getElementById("SNMask4").readOnly="readOnly";
+
+	window.parent.document.getElementById("DGAddr1").readOnly="readOnly";
+	window.parent.document.getElementById("DGAddr2").readOnly="readOnly";
+	window.parent.document.getElementById("DGAddr3").readOnly="readOnly";
+	window.parent.document.getElementById("DGAddr4").readOnly="readOnly";
+}
+function ipsetclick()
+{
+	window.parent.document.getElementById("IpAddr1").readOnly=false;
+    window.parent.document.getElementById("IpAddr2").readOnly=false;
+	window.parent.document.getElementById("IpAddr3").readOnly=false;
+	window.parent.document.getElementById("IpAddr4").readOnly=false;
+
+	window.parent.document.getElementById("SNMask1").readOnly=false;
+	window.parent.document.getElementById("SNMask2").readOnly=false;
+	window.parent.document.getElementById("SNMask3").readOnly=false;
+	window.parent.document.getElementById("SNMask4").readOnly=false;
+
+	window.parent.document.getElementById("DGAddr1").readOnly=false;
+	window.parent.document.getElementById("DGAddr2").readOnly=false;
+	window.parent.document.getElementById("DGAddr3").readOnly=false;
+	window.parent.document.getElementById("DGAddr4").readOnly=false;
+}
+
+window.refreshInfoSet = function operate8i8o(input_1, input_2, output_1, netdata, nettype) {
+	try {
+            var i=0;
+            var j=8;
+            for(i;i<8;i++)
+            {
+                if((input_1&0x1)==0x0)
+                {
+                    window.parent.document.getElementById(portconfigID[i]).src="./images/iono.png";
+                }
+                if((input_1&0x1)==0x1)
+                {
+                    window.parent.document.getElementById(portconfigID[i]).src="./images/iolv.png";
+                }
+                if((input_2&0x1)==0x1)
+                {
+                    window.parent.document.getElementById(portconfigID[i]).src="./images/ioho.png";
+                }
+                input_1=input_1>>1;
+                input_2=input_2>>1;
+            } 
+            for(var j=0;j<8;j++)
+            {
+                    if((output_1&0x1)==0x0)
+                    {
+                        window.parent.document.getElementById(output[j]).value="close";
+                        window.parent.document.getElementById(output[j]).style.background="#FF0000";
+                    }
+                    if((output_1&0x1)==0x1)
+                    {
+                        window.parent.document.getElementById(output[j]).value="open";
+                        window.parent.document.getElementById(output[j]).style.background="#00FF00";
+                    }
+                    output_1=output_1>>1; 
+ 
+            }
+
+            if(netdata==0x1)/*入网*/
+                {
+                    window.parent.document.getElementById("netdetect").src="./images/iolv.png"; 
+                    for(var n=0;n<8;n++)
+                    {
+                        window.parent.document.getElementById(output[n]).disabled="disabled";
+                    }
+                }
+            if(netdata==0x0)
+                {
+                    window.parent.document.getElementById("netdetect").src="./images/ioho.png"; 
+                    for(var m=0;m<8;m++)
+                    {
+                        window.parent.document.getElementById(output[m]).disabled=false;
+                    }                   
+                }
+            if(nettype==1)/*Ethernet*/
+                {
+                    window.parent.document.getElementById("headerimg").src="./images/nlogo_en.png"; 
+                    window.parent.document.getElementById("rightdiv").style.display="block";           
+                }
+            if(nettype==0)/*profinet*/
+                {
+                    window.parent.document.getElementById("headerimg").src="./images/nlogo_pn.png";
+                    window.parent.document.getElementById("rightdiv").style.display="none";       
+                }
+
+
+	} catch (e) {
+	}
+  }
+/*ip刷新*/
+var ip407add1="<!--#ipadd_1-->";
+var ip407add2="<!--#ipadd_2-->";
+var ip407add3="<!--#ipadd_3-->";
+var ip407add4="<!--#ipadd_4-->";
+
+var mask407d1="<!--#mask_1-->";
+var mask407d2="<!--#mask_2-->";
+var mask407d3="<!--#mask_3-->";
+var mask407d4="<!--#mask_4-->";
+
+var gatewayd1="<!--#gateway_1-->";
+var gatewayd2="<!--#gateway_2-->";
+var gatewayd3="<!--#gateway_3-->";
+var gatewayd4="<!--#gateway_4-->";
+
+function refreship(ipadd_1,ipadd_2,ipadd_3,ipadd_4,mask_1,mask_2,mask_3,mask_4,gateway_1,gateway_2,gateway_3,gateway_4)
+{
+    window.parent.document.getElementById("IpAddr1").value=ipadd_1;
+    window.parent.document.getElementById("IpAddr2").value=ipadd_2;
+    window.parent.document.getElementById("IpAddr3").value=ipadd_3;
+    window.parent.document.getElementById("IpAddr4").value=ipadd_4;
+
+    window.parent.document.getElementById("SNMask1").value=mask_1;
+    window.parent.document.getElementById("SNMask2").value=mask_2;
+    window.parent.document.getElementById("SNMask3").value=mask_3;
+    window.parent.document.getElementById("SNMask4").value=mask_4;
+
+    window.parent.document.getElementById("DGAddr1").value=gateway_1;
+    window.parent.document.getElementById("DGAddr2").value=gateway_2;
+    window.parent.document.getElementById("DGAddr3").value=gateway_3;
+    window.parent.document.getElementById("DGAddr4").value=gateway_4;
+}
+
+
+
+var outputstate;
+ function openclose(outputstate)
+ {
+   var openclosedata=window.parent.document.getElementById(output[outputstate]);
+   if(openclosedata.value!="open")
+   {
+      openclosedata.value="open";
+      openclosedata.style.background="#00FF00";
+      openclosedata.disabled="disabled";
+      
+
+      controlXHR1.abort();
+      controlXHR1.open("GET","/io.cgi?ouputstyle="+"1"+"outputnum"+outputstate+"&randpara=" + Math.random(),true);		/*outputstyle=1,打开*/		
+      controlXHR1.send();
+      controlXHR1.onreadystatechange=function()                
+                {
+                    
+                    if (controlXHR1.readyState==4)
+                        {
+                            if(controlXHR1.status==200)
+                            {
+                                openclosedata.disabled=false;						 
+                            }
+                        }					 
+                }
+   }
+   else
+   {
+      openclosedata.value="close"; 
+      openclosedata.style.background="#FF0000";
+      openclosedata.disabled="disabled";
+
+      controlXHR1.abort();
+      controlXHR1.open("GET","/io.cgi?ouputstyle="+"0"+"outputnum"+outputstate+"&randpara=" + Math.random(),true);		/*outputstyle=1,打开*/		
+      controlXHR1.send();
+      controlXHR1.onreadystatechange=function()                
+                {
+                    
+                    if (controlXHR1.readyState==4)
+                        {
+                            if(controlXHR1.status==200)
+                            {
+                                openclosedata.disabled=false;					 
+                            }
+                        }					 
+                }     
+   }
+ }
+
+
+
+
+</script>
+
+
+<style type="text/css">
+.STYLE1 {
+	font-size: 18px;
+	font-weight: bold;
+}
+.STYLE2 {font-size: 18px}
+</style>
+
+
+
+
+
+</head>
+<body onload="refreship(ip407add1,ip407add2,ip407add3,ip407add4,mask407d1,mask407d2,mask407d3,mask407d4,gatewayd1,gatewayd2,gatewayd3,gatewayd4)">
+<div id="header" style="width: 800px;height: 75px;background-color: #fff;box-shadow: 5px 5px 5px 0 rgba(0, 0, 0, .05);-webkit-box-shadow: #d4d2d2 0px 0px 10px;-moz-box-shadow: #d4d2d2 0px 0px 10px;margin:auto">
+    <img  src="./images/cargoa_logo.gif"  height="50px" width="100px" style="margin-left: 50px;margin-top:10px">
+    <img  src="./images/nlogo_en.png" width="500px" height="50px" style="margin-left: 145px;margin-top:10px;" id="headerimg">
+    
+</div>
+<div id="left" style="width:500px;box-shadow: 5px 5px 5px 0 rgba(0, 0, 0, .05);-webkit-box-shadow: #d4d2d2 0px 0px 10px;-moz-box-shadow: #d4d2d2 0px 0px 10px;margin:auto">   
+    <table  cellpadding="0" cellspacing="0" style="margin-top: 10px;margin-left: 50px;">
+      <tr><td>
+            <table width="100%"  class="table01 table02" style="padding-top:20px;">
+                    <tr  height="50px"><td width="34%"><span class="STYLE1">Input</span></td>
+                    <td width="33%"><span class="STYLE2">Status</span></td>
+                    </tr>
+                    <tr><td style="background: #e9ebf1;"><span class="STYLE2">Input0</span></td>
+                    <td align="center"><img src="images/iono.png" class="in01 " id="Input0idimg" onClick=""> </td>
+                    </tr>
+                    <tr><td style="background: #e9ebf1;"><span class="STYLE2">Input1</span></td>
+                    <td align="center"><img src="images/iono.png" class="in01 " id="Input1idimg" onClick=""> </td>
+                    </tr>
+                    <tr><td style="background: #e9ebf1;"><span class="STYLE2">Input2</span></td>
+                    <td align="center"><img src="images/iono.png" class="in01 " id="Input2idimg" onClick=""> </td>
+                    </tr>
+                    <tr><td style="background: #e9ebf1;"><span class="STYLE2">Input3</span></td>
+                    <td align="center"><img src="images/iono.png" class="in01 " id="Input3idimg" onClick=""> </td>
+                    </tr>
+                    <tr><td style="background: #e9ebf1;"><span class="STYLE2">Input4</span></td>
+                    <td align="center"><img src="images/iono.png" class="in01 " id="Input4idimg" onClick=""> </td>
+                    </tr>
+                    <tr><td style="background: #e9ebf1;"><span class="STYLE2">Input5</span></td>
+                    <td align="center"><img src="images/iono.png" class="in01 " id="Input5idimg" onClick=""> </td>
+                    </tr>
+                    <tr><td style="background: #e9ebf1;"><span class="STYLE2">Input6</span></td>
+                    <td align="center"><img src="images/iono.png" class="in01 " id="Input6idimg" onClick=""> </td>
+                    </tr>
+                    <tr><td style="background: #e9ebf1;"><span class="STYLE2">Input7</span></td>
+                    <td align="center"><img src="images/iono.png" class="in01 " id="Input7idimg" onClick=""> </td>
+                    </tr>                    
+            </table>
+        </td>
+        <td width="135px" height="400px"  style="background:url(images/IO-tp.png) repeat-x " ></td>
+        <td>
+            <table  width="100%"  class="table01 table02">
+                        <tr height="50px" class="iocla"><td width="34%"><span class="STYLE2">Status</span></td>
+                        <td width="33%"><span class="STYLE2"><strong>Output</strong></span></td>
+                        </tr>
+                        <tr class=""><td align="center"><input type="button" value="close" id="outputid0" onClick="openclose(0)" style="background: #f50424;color: #050000" ></td>
+                        <td style="background: #e9ebf1;"><span class="STYLE2">Output0 </span></td>
+                        </tr>
+                        <tr class=""><td align="center"><input type="button" value="close" id="outputid1" onClick="openclose(1)" style="background: #f50424;color: #050000" ></td>
+                        <td style="background: #e9ebf1;"><span class="STYLE2">Output1 </span></td>
+                        </tr>
+                        <tr class=""><td align="center"><input type="button" value="close" id="outputid2" onClick="openclose(2)" style="background: #f50424;color: #050000" ></td>
+                        <td style="background: #e9ebf1;"><span class="STYLE2">Output2</span></td>
+                        </tr>
+                        <tr class=""><td align="center"><input type="button" value="close" id="outputid3" onClick="openclose(3)" style="background: #f50424;color: #050000" ></td>
+                        <td style="background: #e9ebf1;"><span class="STYLE2">Output3</span></td>
+                        </tr>
+                        <tr class=""><td align="center"><input type="button" value="close" id="outputid4" onClick="openclose(4)" style="background: #f50424;color: #050000" ></td>
+                        <td style="background: #e9ebf1;"><span class="STYLE2">Output4</span></td>
+                        </tr>
+                        <tr class=""><td align="center"><input type="button" value="close" id="outputid5" onClick="openclose(5)" style="background: #f50424;color: #050000" ></td>
+                        <td style="background: #e9ebf1;"><span class="STYLE2">Output5</span></td>
+                        </tr>
+                        <tr class=""><td align="center"><input type="button" value="close" id="outputid6" onClick="openclose(6)" style="background: #f50424;color: #050000" ></td>
+                        <td style="background: #e9ebf1;"><span class="STYLE2">Output6</span></td>
+                        </tr>
+                        <tr class=""><td align="center"><input type="button" value="close" id="outputid7" onClick="openclose(7)" style="background: #f50424;color: #050000" ></td>
+                        <td style="background: #e9ebf1;"><span class="STYLE2">Output7</span></td>
+                        </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <div style="margin-left: 70px;">
+        <table height="69px">
+            <tr>
+                <td width="150px" align="center" bordercolor="#000000" bgcolor="#F0F0F0">入网指示</td>
+                <td width="150px" align="center" bordercolor="#000000" bgcolor="#F0F0F0"> <img  class="in00" src="images/ioho.png" id="netdetect"  onClick=""></td>
+            </tr>
+			<tr>
+			<td colspan="2">
+			 <p>Input绿灯代表输入，红灯代表短路,无输入时不显示</p>
+			 <p>模块入网之后入网指示灯绿色常亮，未入网红灯</p>
+			</td>
+			
+			</tr>
+
+       
+        <tr>
+            <td><input type="button" class="button" value="重启设备" style="color:#ff0000" id="reboot" onClick="restartrobot()"></td>
+            <td><input type="button" class="button03" value="恢复出厂设置" style="color:#ff0000" id="reset" onClick="resetToDefault()"></td>
+        </tr>
+	 </table>
+    </div>
+</div>
+<div  id="rightdiv" style="width:500px;height:210px;margin-left: 501px;box-shadow: 5px 5px 5px 0 rgba(0, 0, 0, .05);-webkit-box-shadow: #d4d2d2 0px 0px 10px;-moz-box-shadow: #d4d2d2 0px 0px 10px;margin:auto;margin-top:20px; display: block;">
+    <table class="table" cellspacing="0" cellpadding="0" width="100%" style="margin-top: 0px;padding-bottom: 5px;">
+        <tr>
+          <th colspan="2">IP 配置 </th>
+        </tr>
+        <tr>
+            <td width="15%" height="40" align="center">IP配置</td>
+            <td style="text-align:left;">
+            <form id="IPSettingsForm" method="get" >
+                <br>
+                
+                <input type="text" value="模式选择" readonly="" style="border:0;" size="12">
+				
+                <input type="radio" name="IpSetType" value="DHCP"    id="dhcp"   onclick="dhcpclick()"> DHCP
+                <input type="radio" name="IpSetType" value="Manual"  id="manual" onclick="ipsetclick()"> Manual
+                <br>
+                
+                <input type="text" value="IP 地址" readonly="" style="border:0;" size="12">
+				
+                <input name="IpAddr" type="text" class="ui_input_txt01" id="IpAddr1" value=""  maxlength="3" oninput = "value=value.replace(/[^\d]/g,'')">.
+                <input name="IpAddr" type="text" class="ui_input_txt01" id="IpAddr2" value=""  maxlength="3" oninput = "value=value.replace(/[^\d]/g,'')">.
+                <input name="IpAddr" type="text" class="ui_input_txt01" id="IpAddr3" value=""  maxlength="3" oninput = "value=value.replace(/[^\d]/g,'')">.
+                <input name="IpAddr" type="text" class="ui_input_txt01" id="IpAddr4" value=""  maxlength="3" disabled="" style="background-color: darkgray;">
+                <br>
+                <input type="text" value="子网掩码" readonly="" style="border:0;" size="12">
+				
+                <input name="SNMask" type="text" class="ui_input_txt01" id="SNMask1" value="" maxlength="3" oninput = "value=value.replace(/[^\d]/g,'')">.
+                <input name="SNMask" type="text" class="ui_input_txt01" id="SNMask2" value="" maxlength="3" oninput = "value=value.replace(/[^\d]/g,'')">.
+                <input name="SNMask" type="text" class="ui_input_txt01" id="SNMask3" value="" maxlength="3" oninput = "value=value.replace(/[^\d]/g,'')">.
+                <input name="SNMask" type="text" class="ui_input_txt01" id="SNMask4" value="" maxlength="3" oninput = "value=value.replace(/[^\d]/g,'')">
+                
+                <br>
+                <input type="text" value="默认网关" readonly="" style="border:0;" size="12">
+				
+                <input name="DGAddr" type="text" class="ui_input_txt01" id="DGAddr1" value="" maxlength="3" oninput = "value=value.replace(/[^\d]/g,'')">.
+                <input name="DGAddr" type="text" class="ui_input_txt01" id="DGAddr2" value="" maxlength="3" oninput = "value=value.replace(/[^\d]/g,'')">.
+                <input name="DGAddr" type="text" class="ui_input_txt01" id="DGAddr3" value="" maxlength="3" oninput = "value=value.replace(/[^\d]/g,'')">.
+                <input name="DGAddr" type="text" class="ui_input_txt01" id="DGAddr4" value="" maxlength="3" oninput = "value=value.replace(/[^\d]/g,'')">
+                <br>
+                
+                <input type="button" name="submit" value="提交"  id="save" onclick="ipset()" style="margin-left:160px;margin-bottom: 10px;">
+            </form>
+        </td>
+        </tr>
+       
+    </table>
+
+</div>	
+<div>        
+	 <iframe src="./iodata.shtml" width="0" height="0">     </iframe>
+</div>
+</body>
+</html>
